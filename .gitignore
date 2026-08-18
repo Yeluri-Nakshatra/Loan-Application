@@ -9,12 +9,12 @@ server/dist/
 # Environment variables
 client/.env
 client/.env.*
-server/src/.env
-server/src/.env.*
+server/.env
+server/.env.*
 
 # Allow example environment files
 !client/.env.example
-!server/src/.env.example
+!server/.env.example
 
 # Logs
 *.log
