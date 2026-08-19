@@ -8,6 +8,8 @@ The platform implements strict sequential lending gating (Dual Verification $\ri
 
 ## 🏛️ High-Level System Architecture
 
+![High-Level System Architecture](docs/architecture/system_architecture.jpg)
+
 ```mermaid
 graph TB
     subgraph Client_Layer ["1. Client Layer (React 19 + TailwindCSS)"]
@@ -54,6 +56,8 @@ graph TB
 ---
 
 ## 🔄 End-to-End 9-Step Lending Workflow
+
+![9-Step Lending Workflow](docs/architecture/lending_workflow.jpg)
 
 ```mermaid
 sequenceDiagram
@@ -105,33 +109,9 @@ sequenceDiagram
 
 ---
 
-## 📊 Financial FOIR & Credit Decision Architecture
+## 🔒 AES-256-GCM Cryptographic & Data Masking Pipeline
 
-The underwriting decision tree enforces risk policies and the **50% FOIR (Fixed Obligation to Income Ratio)** rule:
-
-```mermaid
-flowchart TD
-    Start["New Loan Application Request"] --> FetchScore["Evaluate CIBIL Credit Score"]
-    
-    FetchScore --> ScoreCheck{"CIBIL Score >= 550?"}
-    ScoreCheck -- "No (< 550)" --> RejectScore["Decision: NOT_ELIGIBLE\n(Score below institutional threshold)"]
-    
-    ScoreCheck -- "Yes (>= 550)" --> FetchDebt["Auto-Detect Active Loan EMIs from Database"]
-    FetchDebt --> CalcDTI["Calculate Total Debt & DTI Ratio\nTotal Debts = User Debts + Active System EMIs"]
-    
-    CalcDTI --> DTICheck{"DTI Ratio > 50% (FOIR Limit)?"}
-    DTICheck -- "Yes (> 50%)" --> RejectDTI["Decision: NOT_ELIGIBLE\n(Existing commitments exceed 50% capacity)"]
-    
-    DTICheck -- "No (<= 50%)" --> CalcCap["Compute Remaining Available EMI:\nMax EMI = (Income * 50%) - Existing Debts\nMax Principal = calculateMaxPrincipal(Max EMI)"]
-    
-    CalcCap --> ReqCheck{"Requested Amount <= Max Principal?"}
-    ReqCheck -- "Yes" --> ApproveFull["Decision: ELIGIBLE\n(Full requested facility pre-approved)"]
-    ReqCheck -- "No" --> CounterOffer["Decision: PARTIALLY_ELIGIBLE\n(Counter-offer capped at safe Max Principal)"]
-```
-
----
-
-## 🔒 AES-256-GCM Cryptographic Pipeline
+![AES-256-GCM Security and Masking Pipeline](docs/architecture/security_pipeline.jpg)
 
 ```mermaid
 flowchart LR
@@ -161,6 +141,32 @@ flowchart LR
         DB_Doc --> Mask
         Mask --> Client_Out["Sanitized Client View"]
     end
+```
+
+---
+
+## 📊 Financial FOIR & Credit Decision Engine
+
+The automated credit decisioning tree enforces institutional risk policies and the **50% FOIR (Fixed Obligation to Income Ratio)** rule:
+
+```mermaid
+flowchart TD
+    Start["New Loan Application Request"] --> FetchScore["Evaluate CIBIL Credit Score"]
+    
+    FetchScore --> ScoreCheck{"CIBIL Score >= 550?"}
+    ScoreCheck -- "No (< 550)" --> RejectScore["Decision: NOT_ELIGIBLE\n(Score below institutional threshold)"]
+    
+    ScoreCheck -- "Yes (>= 550)" --> FetchDebt["Auto-Detect Active Loan EMIs from Database"]
+    FetchDebt --> CalcDTI["Calculate Total Debt & DTI Ratio\nTotal Debts = User Debts + Active System EMIs"]
+    
+    CalcDTI --> DTICheck{"DTI Ratio > 50% (FOIR Limit)?"}
+    DTICheck -- "Yes (> 50%)" --> RejectDTI["Decision: NOT_ELIGIBLE\n(Existing commitments exceed 50% capacity)"]
+    
+    DTICheck -- "No (<= 50%)" --> CalcCap["Compute Remaining Available EMI:\nMax EMI = (Income * 50%) - Existing Debts\nMax Principal = calculateMaxPrincipal(Max EMI)"]
+    
+    CalcCap --> ReqCheck{"Requested Amount <= Max Principal?"}
+    ReqCheck -- "Yes" --> ApproveFull["Decision: ELIGIBLE\n(Full requested facility pre-approved)"]
+    ReqCheck -- "No" --> CounterOffer["Decision: PARTIALLY_ELIGIBLE\n(Counter-offer capped at safe Max Principal)"]
 ```
 
 ---
