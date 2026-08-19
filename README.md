@@ -10,50 +10,7 @@ The platform implements strict sequential lending gating (Dual Verification $\ri
 
 ![High-Level System Architecture](docs/architecture/system_architecture.jpg)
 
-```mermaid
-graph TB
-    subgraph Client_Layer ["1. Client Layer (React 19 + TailwindCSS)"]
-        UI_Borrower["Borrower Portal\n(Dashboard, Journey, KYC, Eligibility)"]
-        UI_Admin["Underwriting Desk\n(Dossier Review, Biometrics, Audit Trail)"]
-        UI_State["Auth & Toast Contexts\n(Role Protection & Session Guard)"]
-    end
 
-    subgraph API_Gateway ["2. API Gateway & Authentication Layer (Node.js / Express)"]
-        Router["Express Router & Middlewares"]
-        ST_Auth["SuperTokens Auth Engine\n(Session Validation & Google OAuth 2.0)"]
-        OTP_Dispatch["Multi-Channel OTP Dispatcher\n(Nodemailer SMTP + Fast2SMS)"]
-    end
-
-    subgraph Business_Engines ["3. Core Lending & Underwriting Engines"]
-        KYC_Engine["KYC Attestation Engine\n(ID Verification & Document Ingestion)"]
-        FOIR_Engine["Financial FOIR & DTI Engine\n(CIBIL Tiering & 50% Debt Cap)"]
-        EMI_Engine["Reducing Balance EMI Engine\n(Amortization Schedule Generator)"]
-        Biometric_Engine["Live Biometric Liveness Engine\n(Face Capture & Camera Validation)"]
-        Decision_Engine["Credit Sanction & Gating Desk\n(Approval / Rejection State Machine)"]
-    end
-
-    subgraph Security_Layer ["4. Security & Cryptography Subsystem"]
-        AES_Cipher["AES-256-GCM Cipher\n(256-bit Encryption at Rest + IV/Tag)"]
-        Masking_Service["UIDAI / RBI Data Masking\n(Aadhaar, PAN & Bank Account Sanitization)"]
-    end
-
-    subgraph Data_Layer ["5. Persistence Layer (MongoDB Atlas)"]
-        DB_Users[("Users Collection\n(Roles, Credentials, Status)")]
-        DB_KYC[("KYC Collection\n(Encrypted IDs & Metadata)")]
-        DB_Eligibility[("Eligibility Collection\n(DTI, CIBIL, Credit Tier)")]
-        DB_Loans[("LoanApplications Collection\n(Dossiers, EMIs, Encrypted Banks, Audits)")]
-    end
-
-    UI_Borrower --> Router
-    UI_Admin --> Router
-    Router --> ST_Auth
-    Router --> OTP_Dispatch
-    Router --> Business_Engines
-    Business_Engines --> Security_Layer
-    Security_Layer --> Data_Layer
-```
-
----
 
 ## 🔄 End-to-End 9-Step Lending Workflow
 
