@@ -134,12 +134,12 @@ flowchart TD
 $$\text{EMI} = \frac{P \times r \times (1 + r)^n}{(1 + r)^n - 1}$$
 
 Where:
-* $P$ = Principal Loan Amount
-* $r$ = Monthly Interest Rate ($\text{Annual APR} / 12 / 100$)
-* $n$ = Loan Tenure in Months
+* **P** = Principal Loan Amount
+* **r** = Monthly Interest Rate ($\text{Annual APR} / 12 / 100$)
+* **n** = Loan Tenure in Months
 
 ### 2. Maximum Principal Capacity by FOIR Cap
-$$\text{Max Allowed New EMI} = \max\left(0, (\text{Monthly Income} \times 50\%) - \text{Total Existing Monthly Debts}\right)$$
+$$\text{Max Allowed New EMI} = \max\left(0,\; (\text{Monthly Income} \times 0.50) - \text{Total Existing Debts}\right)$$
 
 $$\text{Max Eligible Principal} = \frac{\text{Max Allowed EMI} \times \left((1 + r)^n - 1\right)}{r \times (1 + r)^n}$$
 
