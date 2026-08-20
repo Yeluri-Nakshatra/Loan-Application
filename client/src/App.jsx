@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Header from "./components/common/Header";
 import Signup from "./components/auth/Signup";
 import Login from "./components/auth/Login";
@@ -19,6 +19,25 @@ function RootRedirect() {
     return <Navigate to="/login" replace />;
   }
   return <Navigate to={user?.role === "admin" ? "/admin/dashboard" : "/customer/dashboard"} replace />;
+}
+
+function ConditionalFooter() {
+  const location = useLocation();
+  if (location.pathname.startsWith("/admin/dashboard")) return null;
+  return (
+    <footer className="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500 mt-auto">
+      <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p>&copy; 2026 EZFINANZ Lending Solutions Inc. All rights reserved. Banking license & regulatory compliance ID #84920.</p>
+        <div className="flex items-center gap-4 text-slate-400">
+          <span className="hover:text-slate-600 cursor-pointer">Security Policy</span>
+          <span>&middot;</span>
+          <span className="hover:text-slate-600 cursor-pointer">Privacy & KYC</span>
+          <span>&middot;</span>
+          <span className="hover:text-slate-600 cursor-pointer">Terms of Service</span>
+        </div>
+      </div>
+    </footer>
+  );
 }
 
 function App() {
@@ -91,18 +110,7 @@ function App() {
             </main>
 
             {/* Institutional Footer */}
-            <footer className="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
-              <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <p>© 2026 EZFINANZ Lending Solutions Inc. All rights reserved. Banking license & regulatory compliance ID #84920.</p>
-                <div className="flex items-center gap-4 text-slate-400">
-                  <span className="hover:text-slate-600 cursor-pointer">Security Policy</span>
-                  <span>•</span>
-                  <span className="hover:text-slate-600 cursor-pointer">Privacy & KYC</span>
-                  <span>•</span>
-                  <span className="hover:text-slate-600 cursor-pointer">Terms of Service</span>
-                </div>
-              </div>
-            </footer>
+            <ConditionalFooter />
           </div>
         </ToastProvider>
       </AuthProvider>

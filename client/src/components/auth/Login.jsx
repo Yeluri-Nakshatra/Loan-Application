@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Mail,
@@ -12,6 +12,8 @@ import {
   CheckCircle2,
   UserCheck,
   Shield,
+  Clock,
+  RotateCw,
 } from "lucide-react";
 import {
   login,
@@ -39,6 +41,27 @@ export default function Login() {
   const [phone, setPhone] = useState("");
   const [phoneOTP, setPhoneOTP] = useState("");
   const [otpSent, setOtpSent] = useState(false);
+  const [phoneTimer, setPhoneTimer] = useState(300); // 5 minutes in seconds
+  const [phoneResendLoading, setPhoneResendLoading] = useState(false);
+  
+  const phoneTimerRef = useRef(null);
+
+  useEffect(() => {
+    if (otpSent && phoneTimer > 0) {
+      phoneTimerRef.current = setInterval(() => {
+        setPhoneTimer((prev) => (prev > 0 ? prev - 1 : 0));
+      }, 1000);
+    } else {
+      clearInterval(phoneTimerRef.current);
+    }
+    return () => clearInterval(phoneTimerRef.current);
+  }, [otpSent, phoneTimer]);
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
 
   // Loading state
   const [loading, setLoading] = useState(false);
@@ -92,6 +115,20 @@ export default function Login() {
       toast.error(err.message || "Failed to send phone OTP.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResendPhoneLoginOTP = async () => {
+    setPhoneResendLoading(true);
+    try {
+      const res = await sendPhoneLoginOTP(phone.trim());
+      setPhoneTimer(300);
+      setPhoneOTP("");
+      toast.success(res.message || "A fresh OTP has been sent to your phone.");
+    } catch (err) {
+      toast.error(err.message || "Failed to resend phone OTP.");
+    } finally {
+      setPhoneResendLoading(false);
     }
   };
 
@@ -365,44 +402,54 @@ export default function Login() {
               </form>
             ) : (
               <form onSubmit={handleVerifyPhoneLogin} className="space-y-4">
-                <div>
-                  <div className="flex justify-between items-center mb-1.5">
-                    <label className="text-xs sm:text-sm font-semibold text-slate-700">
-                      Enter Mobile OTP
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => setOtpSent(false)}
-                      className="text-xs text-blue-900 font-bold hover:underline cursor-pointer"
-                    >
-                      Change Number ({phone})
-                    </button>
+                  <div>
+                    <div className="flex justify-between items-center mb-1.5">
+                      <label className="text-xs sm:text-sm font-semibold text-slate-700">
+                        Enter Mobile OTP
+                      </label>
+                      <div className="flex items-center gap-1 text-slate-600 font-mono text-xs sm:text-sm">
+                        <Clock className="w-3.5 h-3.5 text-slate-400" />
+                        <span>{formatTime(phoneTimer)}</span>
+                      </div>
+                    </div>
+                    <input
+                      type="text"
+                      maxLength={6}
+                      value={phoneOTP}
+                      onChange={(e) => setPhoneOTP(e.target.value.replace(/\D/g, ""))}
+                      placeholder="• • • • • •"
+                      className="w-full px-3.5 py-2.5 sm:py-3 bg-white border border-slate-300 rounded-lg text-center text-lg sm:text-xl font-mono font-bold tracking-widest text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-900/20 focus:border-blue-900"
+                    />
+                    
+                    <div className="mt-3 flex items-center justify-between text-[11px] sm:text-xs">
+                      <span className="text-slate-500">Didn't receive SMS code?</span>
+                      <button
+                        type="button"
+                        onClick={handleResendPhoneLoginOTP}
+                        disabled={phoneResendLoading || phoneTimer > 240}
+                        className="text-blue-900 font-bold hover:underline disabled:text-slate-400 disabled:no-underline flex items-center gap-1 cursor-pointer"
+                      >
+                        <RotateCw className={`w-3.5 h-3.5 ${phoneResendLoading ? "animate-spin" : ""}`} />
+                        Resend Code {phoneTimer > 240 && `(${phoneTimer - 240}s)`}
+                      </button>
+                    </div>
                   </div>
-                  <input
-                    type="text"
-                    maxLength={6}
-                    value={phoneOTP}
-                    onChange={(e) => setPhoneOTP(e.target.value.replace(/\D/g, ""))}
-                    placeholder="• • • • • •"
-                    className="w-full px-3.5 py-2.5 sm:py-3 bg-white border border-slate-300 rounded-lg text-center text-lg sm:text-xl font-mono font-bold tracking-widest text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-900/20 focus:border-blue-900"
-                  />
-                </div>
 
-                <button
-                  type="submit"
-                  disabled={loading || phoneOTP.length !== 6 || googleLoading}
-                  className="w-full py-3 px-4 bg-blue-900 hover:bg-blue-800 text-white text-sm sm:text-base font-bold rounded-lg shadow-sm transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Verifying...
-                    </>
-                  ) : (
-                    `Verify & Enter as ${selectedRole === "admin" ? "Officer" : "Customer"}`
-                  )}
-                </button>
-              </form>
+                  <button
+                    type="submit"
+                    disabled={loading || phoneOTP.length !== 6 || googleLoading}
+                    className="w-full py-3 px-4 bg-blue-900 hover:bg-blue-800 text-white text-sm sm:text-base font-bold rounded-lg shadow-sm transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Verifying...
+                      </>
+                    ) : (
+                      `Verify & Enter as ${selectedRole === "admin" ? "Officer" : "Customer"}`
+                    )}
+                  </button>
+                </form>
             )}
           </div>
         )}

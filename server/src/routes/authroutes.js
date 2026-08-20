@@ -20,13 +20,19 @@ const {
   // Third-party OAuth
   getGoogleAuthURL,
   handleGoogleCallback,
+  registerAdmin,
 } = require("../controllers/authController");
 
 const {
     requireRole
 } = require("../middlewares/authMiddleware");
 
+const { verifySession } = require("supertokens-node/recipe/session/framework/express");
 const router = express.Router();
+
+// Admin Management
+router.post("/register-admin", verifySession(), requireRole("admin"), registerAdmin);
+
 
 // Step-by-Step Interactive Signup Routes
 router.post("/signup/send-email-otp", sendSignupEmailOTP);

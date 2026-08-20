@@ -202,3 +202,11 @@ export const reviewApplicationAdmin = (applicationId, decision, remarks, selfieA
     method: "POST",
     body: JSON.stringify({ applicationId, decision, remarks, selfieApproved, reviewerId }),
   });
+
+
+// Admin Management
+export const registerAdmin = (adminData) =>
+  request("/auth/register-admin", {
+    method: "POST",
+    body: JSON.stringify(adminData),
+  });

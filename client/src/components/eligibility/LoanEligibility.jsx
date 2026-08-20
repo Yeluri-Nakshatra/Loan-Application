@@ -238,10 +238,10 @@ export default function LoanEligibility() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Monthly Net In-Hand Income ($) <span className="text-red-500">*</span>
+                  Monthly Net In-Hand Income (₹) <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
                   <input
                     type="number"
                     min="10000"
@@ -253,7 +253,7 @@ export default function LoanEligibility() {
                   />
                 </div>
                 <p className="text-[11px] text-slate-500 mt-1">
-                  Annual Equivalent: ${(monthlyIncome * 12).toLocaleString()}/year
+                  Annual Equivalent: ₹{(monthlyIncome * 12).toLocaleString()}/year
                 </p>
               </div>
 
@@ -339,14 +339,14 @@ export default function LoanEligibility() {
               <div>
                 <div className="flex justify-between items-center mb-1.5">
                   <label className="text-xs font-semibold text-slate-700">
-                    Current Monthly Debts / Existing EMIs ($) <span className="text-red-500">*</span>
+                    Current Monthly Debts / Existing EMIs (₹) <span className="text-red-500">*</span>
                   </label>
                   <span className={`text-xs font-bold ${liveDti > 50 ? "text-red-600" : liveDti > 35 ? "text-amber-600" : "text-emerald-600"}`}>
                     DTI: {liveDti}%
                   </span>
                 </div>
                 <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
                   <input
                     type="number"
                     min="0"
@@ -361,12 +361,12 @@ export default function LoanEligibility() {
                   <div className="mt-1.5 p-2 bg-blue-50 border border-blue-200 rounded-lg text-[11px] text-blue-950 flex items-center gap-1.5 font-medium">
                     <ShieldCheck className="w-3.5 h-3.5 text-blue-700 shrink-0" />
                     <span>
-                      Includes <strong>${activeLoanEMI.toLocaleString()}/mo</strong> from your verified active loan.
+                      Includes <strong>₹{activeLoanEMI.toLocaleString()}/mo</strong> from your verified active loan.
                     </span>
                   </div>
                 )}
                 <p className="text-[11px] text-slate-500 mt-1">
-                  Disposable Income: <strong className="text-slate-700 font-mono">${liveDisposable.toLocaleString()}</strong>/month
+                  Disposable Income: <strong className="text-slate-700 font-mono">₹{liveDisposable.toLocaleString()}</strong>/month
                 </p>
               </div>
             </div>
@@ -384,10 +384,10 @@ export default function LoanEligibility() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Requested Loan Amount ($) <span className="text-red-500">*</span>
+                  Requested Loan Amount (₹) <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
                   <input
                     type="number"
                     min="5000"
@@ -540,10 +540,10 @@ export default function LoanEligibility() {
                 Max Eligible Loan
               </span>
               <p className="text-2xl font-bold text-slate-900 mt-2 font-mono">
-                ${assessment.maxEligibleAmount.toLocaleString()}.00
+                ₹{assessment.maxEligibleAmount.toLocaleString()}.00
               </p>
               <p className="text-xs text-slate-500 mt-1">
-                Requested: ${assessment.requestedAmount.toLocaleString()}
+                Requested: ₹{assessment.requestedAmount.toLocaleString()}
               </p>
             </div>
 
@@ -552,7 +552,7 @@ export default function LoanEligibility() {
                 Estimated Monthly EMI
               </span>
               <p className="text-2xl font-bold text-blue-950 mt-2 font-mono">
-                ${assessment.estimatedMonthlyEMI.toLocaleString()}/mo
+                ₹{assessment.estimatedMonthlyEMI.toLocaleString()}/mo
               </p>
               <p className="text-xs text-slate-500 mt-1">
                 For {assessment.tenureMonths} Months Tenure

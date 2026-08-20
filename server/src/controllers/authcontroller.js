@@ -2,6 +2,7 @@
 const User = require("../models/User");
 const generateOTP = require("../utils/otpGenerator");
 const { sendEmailOTP, sendPasswordResetEmail, sendPhoneBackupEmailOTP } = require("../services/emailService");
+const { enqueueNotification } = require("../queues/notificationQueue");
 const {
     sendPhoneOTP,
 } = require("../services/phoneService");
@@ -1133,8 +1134,8 @@ const sendSignupEmailOTP = async (req, res) => {
             });
         }
 
-        // Dispatch Email OTP
-        await sendEmailOTP(trimmedEmail, emailOtp);
+        // Dispatch Email OTP to Redis Queue (Async)
+        enqueueNotification("SEND_EMAIL_OTP", { email: trimmedEmail, otp: emailOtp });
 
         return res.status(200).json({
             message: "Verification code sent to your email.",
@@ -1260,11 +1261,12 @@ const sendSignupPhoneOTP = async (req, res) => {
         user.phoneVerified = false;
         await user.save();
 
-        // Dispatch phone OTP via SMS + Email backup
-        await sendPhoneOTP(trimmedPhone, phoneOtp);
-        if (user.email) {
-            await sendPhoneBackupEmailOTP(user.email, trimmedPhone, phoneOtp);
-        }
+        // Dispatch phone OTP via Redis Queue (Async)
+        enqueueNotification("SEND_PHONE_OTP", { 
+            phone: trimmedPhone, 
+            otp: phoneOtp, 
+            email: user.email 
+        });
 
         return res.status(200).json({
             message: "Verification code sent to your phone and email.",
@@ -1606,7 +1608,52 @@ const handleGoogleCallback = async (req, res) => {
     }
 };
 
+
+/**
+ * Provision new admin account (Admin Only)
+ */
+const registerAdmin = async (req, res) => {
+    try {
+        const { name, email, phone, password } = req.body;
+        
+        const existingEmail = await User.findOne({ email });
+        if (existingEmail) {
+            return res.status(400).json({ message: "An account with this email already exists." });
+        }
+        
+        const existingPhone = await User.findOne({ phone });
+        if (existingPhone) {
+            return res.status(400).json({ message: "An account with this phone already exists." });
+        }
+        
+        const user = await User.create({
+            name,
+            email,
+            phone,
+            role: "admin",
+            emailVerified: true,
+            phoneVerified: true,
+            signupCompleted: true,
+        });
+        
+        const stResult = await createSuperTokensUser(email, password);
+        if (!stResult.success) {
+            await User.findByIdAndDelete(user._id);
+            return res.status(500).json({ message: "Failed to create security record for admin." });
+        }
+        
+        user.supertokensUserId = stResult.userId;
+        await user.save();
+        
+        return res.status(201).json({ message: "Admin account provisioned successfully." });
+    } catch (error) {
+        console.error("registerAdmin error:", error);
+        return res.status(500).json({ message: "Failed to provision admin account." });
+    }
+};
+
 module.exports = {
+    registerAdmin,
     signup,
     verifyEmail,
     verifyPhone,

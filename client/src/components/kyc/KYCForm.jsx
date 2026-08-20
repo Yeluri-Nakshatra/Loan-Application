@@ -11,6 +11,7 @@ import {
   AlertCircle,
   Clock,
   ArrowLeft,
+  ArrowRight,
   Loader2,
   X,
   FileCheck,
@@ -81,7 +82,7 @@ export default function KYCForm() {
             });
           }
           setIdType(res.kyc.idType || "PAN");
-          if (res.kyc.idNumber && !res.kyc.idNumber.includes("X")) {
+          if (res.kyc.idNumber) {
             setIdNumber(res.kyc.idNumber);
           } else {
             setIdNumber("");
@@ -161,14 +162,17 @@ export default function KYCForm() {
 
     // Format Validations
     const cleanId = idNumber.trim().toUpperCase();
-    if (idType === "PAN" && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(cleanId)) {
+    const isMasked = cleanId.includes("X");
+    if (!isMasked) {
+      if (idType === "PAN" && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(cleanId)) {
       toast.error("Invalid PAN format. Standard format: ABCDE1234F");
       return;
     }
 
     if (idType === "Aadhaar" && !/^\d{12}$/.test(cleanId.replace(/\s+/g, ""))) {
       toast.error("Invalid Aadhaar number. Must be exactly 12 numerical digits.");
-      return;
+        return;
+      }
     }
 
     setLoading(true);

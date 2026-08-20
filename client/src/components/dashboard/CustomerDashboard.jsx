@@ -423,7 +423,7 @@ export default function CustomerDashboard() {
               </div>
               <p className="text-xs sm:text-sm text-slate-600 mt-0.5">
                 {eligibility
-                  ? `Max Sanctionable Capacity: $${eligibility.maxEligibleAmount.toLocaleString()} • DTI: ${eligibility.dtiRatio}% • Rate: ${eligibility.suggestedInterestRate}% APR`
+                  ? `Max Sanctionable Capacity: ₹${eligibility.maxEligibleAmount.toLocaleString()} • DTI: ${eligibility.dtiRatio}% • Rate: ${eligibility.suggestedInterestRate}% APR`
                   : "Calculate your maximum borrowable limit, debt-to-income affordability, and pre-approved APR rates."}
               </p>
             </div>
@@ -433,7 +433,7 @@ export default function CustomerDashboard() {
             to="/customer/eligibility"
             className="self-start sm:self-center px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition-colors shrink-0 flex items-center gap-1.5 cursor-pointer shadow-xs"
           >
-            {eligibility ? "Recalculate Eligibility" : "Check Borrowing Power"}
+            {eligibility ? "Recalculate Eligibility" : "Check Eligibility"}
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
@@ -449,7 +449,7 @@ export default function CustomerDashboard() {
               </div>
             </div>
             <p className="text-2xl font-bold text-slate-900 mt-3 font-mono">
-              ${stats.activeBorrowing.toLocaleString()}.00
+              ₹{stats.activeBorrowing.toLocaleString()}.00
             </p>
             <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-semibold mt-1">
               <CheckCircle2 className="w-3.5 h-3.5" />
@@ -472,7 +472,7 @@ export default function CustomerDashboard() {
               </div>
             </div>
             <p className="text-2xl font-bold text-slate-900 mt-3 font-mono">
-              ${eligibility ? eligibility.maxEligibleAmount.toLocaleString() : "0"}.00
+              ₹{eligibility ? eligibility.maxEligibleAmount.toLocaleString() : "0"}.00
             </p>
             <p className="text-xs text-slate-500 mt-1">
               {eligibility ? `${eligibility.suggestedInterestRate}% APR Tier 1` : "Run eligibility check to evaluate"}
@@ -488,7 +488,7 @@ export default function CustomerDashboard() {
               </div>
             </div>
             <p className="text-2xl font-bold text-slate-900 mt-3 font-mono">
-              ${stats.nextDueEMI.toLocaleString()}.00
+              ₹{stats.nextDueEMI.toLocaleString()}.00
             </p>
             <p className="text-xs text-amber-700 font-medium mt-1">
               {stats.nextDueEMI > 0 ? `Due on ${stats.nextDueDate}` : "No scheduled repayments"}
@@ -550,12 +550,12 @@ export default function CustomerDashboard() {
                         <span className="text-xs font-mono text-blue-900 font-bold">{app.applicationId}</span>
                       </td>
                       <td className="px-6 py-4 font-bold text-slate-900 font-mono">
-                        ${app.loanAmount?.toLocaleString()}.00
+                        ₹{app.loanAmount?.toLocaleString()}.00
                       </td>
                       <td className="px-6 py-4 text-slate-700">
                         <div>{app.tenureMonths} Months</div>
                         <div className="text-xs text-slate-500 font-semibold font-mono">
-                          ${app.monthlyEMI?.toLocaleString()}/mo
+                          ₹{app.monthlyEMI?.toLocaleString()}/mo
                         </div>
                       </td>
                       <td className="px-6 py-4 text-slate-600">
@@ -716,14 +716,14 @@ export default function CustomerDashboard() {
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
                 <span className="text-slate-400 block text-[10px] uppercase font-bold">Loan Amount</span>
                 <strong className="text-sm font-mono text-slate-900">
-                  ${selectedDossierDetail.loanAmount?.toLocaleString()}.00
+                  ₹{selectedDossierDetail.loanAmount?.toLocaleString()}.00
                 </strong>
               </div>
 
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
                 <span className="text-slate-400 block text-[10px] uppercase font-bold">Tenure & EMI</span>
                 <strong className="text-sm font-mono text-blue-950">
-                  {selectedDossierDetail.tenureMonths}M • ${selectedDossierDetail.monthlyEMI?.toLocaleString()}/mo
+                  {selectedDossierDetail.tenureMonths}M • ₹{selectedDossierDetail.monthlyEMI?.toLocaleString()}/mo
                 </strong>
               </div>
 

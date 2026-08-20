@@ -79,29 +79,41 @@ const submitKYC = async (req, res) => {
       });
     }
 
+    let kycRecord = await KYC.findOne({ userId: user._id });
+
     // 4. ID Format Validation (Simulated Standard Banking Regex)
     const cleanIdNumber = idNumber.trim().toUpperCase();
+    const isMaskedInput = cleanIdNumber.includes("X");
+    
+    let encryptedIdNumber;
+    let maskedId;
 
-    if (idType === "PAN") {
-      const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
-      if (!panRegex.test(cleanIdNumber)) {
-        return res.status(400).json({
-          message: "Invalid PAN format. Standard format: ABCDE1234F (5 letters, 4 digits, 1 letter).",
-        });
+    if (isMaskedInput && kycRecord && kycRecord.maskedIdNumber === cleanIdNumber) {
+      // Keep existing
+      encryptedIdNumber = kycRecord.idNumber;
+      maskedId = kycRecord.maskedIdNumber;
+    } else {
+      if (idType === "PAN") {
+        const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+        if (!panRegex.test(cleanIdNumber)) {
+          return res.status(400).json({
+            message: "Invalid PAN format. Standard format: ABCDE1234F (5 letters, 4 digits, 1 letter).",
+          });
+        }
+      } else if (idType === "Aadhaar") {
+        const cleanAadhaar = cleanIdNumber.replace(/\s+/g, "");
+        if (!/^\d{12}$/.test(cleanAadhaar)) {
+          return res.status(400).json({
+            message: "Invalid Aadhaar number. Must be exactly 12 numerical digits.",
+          });
+        }
       }
-    } else if (idType === "Aadhaar") {
-      const cleanAadhaar = cleanIdNumber.replace(/\s+/g, "");
-      if (!/^\d{12}$/.test(cleanAadhaar)) {
-        return res.status(400).json({
-          message: "Invalid Aadhaar number. Must be exactly 12 numerical digits.",
-        });
-      }
+      
+      encryptedIdNumber = encrypt(cleanIdNumber);
+      maskedId = maskIdNumber(idType, cleanIdNumber);
     }
 
     // 5. Upsert KYC record with AES-256 encrypted ID number and masked representation
-    const encryptedIdNumber = encrypt(cleanIdNumber);
-    const maskedId = maskIdNumber(idType, cleanIdNumber);
-
     const kycData = {
       userId: user._id,
       fullName: fullName.trim(),
@@ -126,8 +138,6 @@ const submitKYC = async (req, res) => {
       reviewedBy: null,
       reviewedAt: new Date(),
     };
-
-    let kycRecord = await KYC.findOne({ userId: user._id });
 
     if (kycRecord) {
       Object.assign(kycRecord, kycData);

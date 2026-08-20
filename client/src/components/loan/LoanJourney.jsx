@@ -620,7 +620,7 @@ export default function LoanJourney() {
                   Required Loan Amount (Gross Principal)
                 </label>
                 <div className="flex items-center gap-2">
-                  <span className="text-slate-400 font-bold">$</span>
+                  <span className="text-slate-400 font-bold">₹</span>
                   <input
                     type="number"
                     min="5000"
@@ -643,9 +643,9 @@ export default function LoanJourney() {
                 className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-900"
               />
               <div className="flex justify-between text-xs text-slate-500 font-medium">
-                <span>Min: $5,000</span>
+                <span>Min: ₹5,000</span>
                 <span className="text-emerald-700 font-bold">
-                  Pre-Approved Ceiling: ${maxAllowedAmount.toLocaleString()}
+                  Pre-Approved Ceiling: ₹{maxAllowedAmount.toLocaleString()}
                 </span>
               </div>
 
@@ -731,23 +731,23 @@ export default function LoanJourney() {
                 <div className="space-y-2 text-slate-600">
                   <div className="flex justify-between">
                     <span>Gross Principal Amount:</span>
-                    <strong className="text-slate-900 font-mono">${loanAmount.toLocaleString()}.00</strong>
+                    <strong className="text-slate-900 font-mono">₹{loanAmount.toLocaleString()}.00</strong>
                   </div>
                   <div className="flex justify-between">
                     <span>Processing Fee (2.0%):</span>
-                    <span className="font-mono text-slate-800">${processingFee.toLocaleString()}.00</span>
+                    <span className="font-mono text-slate-800">₹{processingFee.toLocaleString()}.00</span>
                   </div>
                   <div className="flex justify-between">
                     <span>GST on Processing Fee (18%):</span>
-                    <span className="font-mono text-slate-800">${gstOnProcessingFee.toLocaleString()}.00</span>
+                    <span className="font-mono text-slate-800">₹{gstOnProcessingFee.toLocaleString()}.00</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Documentation & Stamp Charges:</span>
-                    <span className="font-mono text-slate-800">${documentationCharges.toLocaleString()}.00</span>
+                    <span className="font-mono text-slate-800">₹{documentationCharges.toLocaleString()}.00</span>
                   </div>
                   <div className="flex justify-between pt-2 border-t border-slate-200 text-slate-800 font-bold">
                     <span>Total Upfront Charges:</span>
-                    <span className="font-mono text-red-600">-${totalCharges.toLocaleString()}.00</span>
+                    <span className="font-mono text-red-600">-₹{totalCharges.toLocaleString()}.00</span>
                   </div>
                 </div>
 
@@ -757,7 +757,7 @@ export default function LoanJourney() {
                       Net Disbursement Amount (Credited to Bank)
                     </span>
                     <p className="text-2xl sm:text-3xl font-bold text-emerald-900 mt-1 font-mono">
-                      ${netDisbursementAmount.toLocaleString()}.00
+                      ₹{netDisbursementAmount.toLocaleString()}.00
                     </p>
                     <p className="text-[11px] text-emerald-700 mt-1">
                       Direct deposit to your verified bank account upon sanction.
@@ -779,7 +779,7 @@ export default function LoanJourney() {
                   Monthly EMI
                 </span>
                 <p className="text-xl sm:text-2xl font-bold text-blue-950 mt-1 font-mono">
-                  ${currentEMI.toLocaleString()}
+                  ₹{currentEMI.toLocaleString()}
                 </p>
                 <span className="text-[10px] text-slate-500">Fixed monthly installment</span>
               </div>
@@ -799,7 +799,7 @@ export default function LoanJourney() {
                   Total Interest
                 </span>
                 <p className="text-xl sm:text-2xl font-bold text-slate-800 mt-1 font-mono">
-                  ${totalInterest.toLocaleString()}
+                  ₹{totalInterest.toLocaleString()}
                 </p>
                 <span className="text-[10px] text-slate-500">Over {tenureMonths} months</span>
               </div>
@@ -809,7 +809,7 @@ export default function LoanJourney() {
                   Total Repayment
                 </span>
                 <p className="text-xl sm:text-2xl font-bold text-slate-900 mt-1 font-mono">
-                  ${totalRepayment.toLocaleString()}
+                  ₹{totalRepayment.toLocaleString()}
                 </p>
                 <span className="text-[10px] text-slate-500">Principal + Total Interest</span>
               </div>
@@ -846,11 +846,11 @@ export default function LoanJourney() {
                       {amortizationSchedule.map((row) => (
                         <tr key={row.month} className="hover:bg-slate-50/80">
                           <td className="p-2 font-bold text-slate-700">#{row.month}</td>
-                          <td className="p-2 text-slate-600">${row.openingBalance.toLocaleString()}</td>
-                          <td className="p-2 font-bold text-blue-950">${row.emi.toLocaleString()}</td>
-                          <td className="p-2 text-emerald-700 font-semibold">${row.principal.toLocaleString()}</td>
-                          <td className="p-2 text-red-600">${row.interest.toLocaleString()}</td>
-                          <td className="p-2 font-bold text-slate-900">${row.closingBalance.toLocaleString()}</td>
+                          <td className="p-2 text-slate-600">₹{row.openingBalance.toLocaleString()}</td>
+                          <td className="p-2 font-bold text-blue-950">₹{row.emi.toLocaleString()}</td>
+                          <td className="p-2 text-emerald-700 font-semibold">₹{row.principal.toLocaleString()}</td>
+                          <td className="p-2 text-red-600">₹{row.interest.toLocaleString()}</td>
+                          <td className="p-2 font-bold text-slate-900">₹{row.closingBalance.toLocaleString()}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -1121,13 +1121,13 @@ export default function LoanJourney() {
               <div>
                 <span className="text-xs text-slate-500 font-medium">Sanctioned Facility:</span>
                 <p className="text-base font-bold text-blue-950">
-                  ${loanAmount.toLocaleString()} at {interestRate}% APR • {tenureMonths} Months
+                  ₹{loanAmount.toLocaleString()} at {interestRate}% APR • {tenureMonths} Months
                 </p>
               </div>
               <div className="text-right">
                 <span className="text-xs text-slate-500 font-medium">Monthly Debit:</span>
                 <p className="text-base font-bold text-emerald-800 font-mono">
-                  ${currentEMI.toLocaleString()}/mo
+                  ₹{currentEMI.toLocaleString()}/mo
                 </p>
               </div>
             </div>
@@ -1145,7 +1145,7 @@ export default function LoanJourney() {
                   <strong className="text-slate-900 block font-bold mb-0.5">
                     1. Loan Sanction Agreement & Repayment Commitment
                   </strong>
-                  I acknowledge and agree to the sanctioned loan terms, fixed interest rate of {interestRate}% APR, and commit to unencumbered monthly EMI servicing of ${currentEMI.toLocaleString()} for {tenureMonths} months.
+                  I acknowledge and agree to the sanctioned loan terms, fixed interest rate of {interestRate}% APR, and commit to unencumbered monthly EMI servicing of ₹{currentEMI.toLocaleString()} for {tenureMonths} months.
                 </div>
               </label>
 
@@ -1315,22 +1315,6 @@ export default function LoanJourney() {
                     </button>
                   </div>
 
-                  <div className="pt-2 border-t border-slate-200 text-center w-full">
-                    <span className="text-[11px] text-slate-400 block mb-1">Having camera issues?</span>
-                    <input
-                      type="file"
-                      id="selfie-file-active"
-                      accept="image/*"
-                      onChange={handleSelfieFileUpload}
-                      className="hidden"
-                    />
-                    <label
-                      htmlFor="selfie-file-active"
-                      className="inline-block px-3 py-1 bg-white border border-slate-300 rounded text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"
-                    >
-                      Upload Selfie Photo Instead
-                    </label>
-                  </div>
                 </div>
               ) : (
                 <div className="flex flex-col items-center text-center space-y-4 max-w-sm">
@@ -1342,7 +1326,7 @@ export default function LoanJourney() {
                       Live Selfie Verification
                     </h3>
                     <p className="text-xs text-slate-500 mt-1">
-                      Click below to open your camera or upload a clear selfie photo for identity matching.
+                      Click below to open your camera and capture a live selfie for identity matching.
                     </p>
                   </div>
 
@@ -1361,23 +1345,6 @@ export default function LoanJourney() {
                     Open Live Camera
                   </button>
 
-                  {/* Direct File Upload Option */}
-                  <div className="pt-3 border-t border-slate-200 w-full text-center">
-                    <span className="text-[11px] text-slate-400 block mb-2">Or upload selfie photo directly</span>
-                    <input
-                      type="file"
-                      id="selfie-file"
-                      accept="image/*"
-                      onChange={handleSelfieFileUpload}
-                      className="hidden"
-                    />
-                    <label
-                      htmlFor="selfie-file"
-                      className="inline-block px-4 py-2 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer shadow-xs"
-                    >
-                      Choose Selfie Image File
-                    </label>
-                  </div>
                 </div>
               )}
             </div>

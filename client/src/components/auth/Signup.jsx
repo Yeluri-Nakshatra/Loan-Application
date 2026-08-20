@@ -29,7 +29,7 @@ import {
 } from "../../services/api";
 import { useToast } from "../../context/ToastContext";
 
-export default function Signup({ onSwitchToLogin }) {
+export default function Signup({ onSwitchToLogin, forcedRole = "customer", onComplete = null, embedded = false }) {
   const toast = useToast();
   const [searchParams] = useSearchParams();
 
@@ -332,7 +332,7 @@ export default function Signup({ onSwitchToLogin }) {
     setLoading((prev) => ({ ...prev, submit: true }));
 
     try {
-      const res = await completeSignup(userId, formData.password, formData.role);
+      const res = await completeSignup(userId, formData.password, forcedRole);
       setCurrentStep(3);
       toast.success(res.message || "Account registered and activated successfully!");
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -408,27 +408,35 @@ export default function Signup({ onSwitchToLogin }) {
             <div className="flex justify-between border-b border-slate-200 pb-2">
               <span className="text-slate-500 font-medium">Verified Mobile:</span>
               <span className="font-semibold text-slate-900">{formData.phone}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-slate-500 font-medium">Designated Role:</span>
-              <span className="font-semibold uppercase tracking-wider text-blue-900 text-xs">
-                {formData.role === "admin" ? "Loan Officer / Admin" : "Customer / Loan Applicant"}
-              </span>
-            </div>
-          </div>
+            </div>          </div>
 
-          <Link
-            to="/login"
-            className="w-full py-3 px-4 bg-blue-900 hover:bg-blue-800 text-white text-sm font-bold rounded-lg shadow-sm transition-colors flex items-center justify-center gap-2 cursor-pointer"
-          >
-            Proceed to Secure Portal Login
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+          {embedded ? (
+            <button
+              type="button"
+              onClick={() => {
+                setCurrentStep(1);
+                setFormData({ name: "", email: "", phone: "", role: "customer", password: "", confirmPassword: "" });
+                setEmailVerified(false); setPhoneVerified(false); setUserId(null);
+                if (onComplete) onComplete();
+              }}
+              className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-lg shadow-sm transition-colors flex items-center justify-center gap-2 cursor-pointer"
+            >
+              Add Another Admin
+              <RotateCw className="w-4 h-4" />
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="w-full py-3 px-4 bg-blue-900 hover:bg-blue-800 text-white text-sm font-bold rounded-lg shadow-sm transition-colors flex items-center justify-center gap-2 cursor-pointer"
+            >
+              Proceed to Secure Portal Login
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          )}
         </div>
       </div>
     );
   }
-
   // -------------------------------------------------------------
   // Main Step 1 & Step 2 Layout
   // -------------------------------------------------------------
@@ -438,13 +446,15 @@ export default function Signup({ onSwitchToLogin }) {
       <div className="text-center mb-6">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-950 border border-blue-200 mb-2.5">
           <ShieldCheck className="w-3.5 h-3.5 text-blue-800" />
-          Institutional Banking Onboarding
+          {forcedRole === "admin" ? "Internal Admin Provisioning" : "Institutional Banking Onboarding"}
         </div>
         <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-          Create Lending Account
+          {forcedRole === "admin" ? "Create Loan Officer Account" : "Create Lending Account"}
         </h1>
         <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-md mx-auto">
-          Complete two-step verification to access personal and commercial loan services.
+          {forcedRole === "admin" 
+            ? "Register a new internal administrator with full underwriting capabilities." 
+            : "Complete two-step verification to access personal and commercial loan services."}
         </p>
       </div>
 
@@ -740,25 +750,7 @@ export default function Signup({ onSwitchToLogin }) {
               )}
             </div>
 
-            {/* Field: Role Selector Dropdown */}
-            <div>
-              <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5">
-                Account Role / Type <span className="text-red-500">*</span>
-              </label>
-              <select
-                name="role"
-                value={formData.role}
-                onChange={handleInputChange}
-                className="w-full px-3.5 py-2.5 sm:py-3 bg-white border border-slate-300 rounded-lg text-sm sm:text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-900/20 focus:border-blue-900"
-              >
-                <option value="customer">
-                  Customer / Loan Applicant (Apply & Manage Loans)
-                </option>
-                <option value="admin">
-                  Loan Officer / Underwriter (Branch Admin Portal)
-                </option>
-              </select>
-            </div>
+
 
             {/* Next Step Action CTA */}
             <div className="pt-2">
@@ -812,14 +804,7 @@ export default function Signup({ onSwitchToLogin }) {
                 <span className="font-semibold text-emerald-700 flex items-center gap-1">
                   <Check className="w-3.5 h-3.5 text-emerald-600" /> {formData.phone}
                 </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-500 font-medium">Role:</span>
-                <span className="font-semibold uppercase text-blue-900 text-[11px] sm:text-xs">
-                  {formData.role === "admin" ? "Loan Officer" : "Customer / Applicant"}
-                </span>
-              </div>
-            </div>
+              </div>            </div>
 
             {/* Field: Create Password */}
             <div>
@@ -939,17 +924,19 @@ export default function Signup({ onSwitchToLogin }) {
       </div>
 
       {/* Switch to Login Footer Link */}
-      <div className="text-center mt-5">
-        <p className="text-xs sm:text-sm text-slate-600">
-          Already have an active account?{" "}
-          <Link
-            to="/login"
-            className="font-bold text-blue-900 hover:text-blue-800 hover:underline cursor-pointer"
-          >
-            Log In to Portal
-          </Link>
-        </p>
-      </div>
+      {!embedded && (
+        <div className="text-center mt-5">
+          <p className="text-xs sm:text-sm text-slate-600">
+            Already have an active account?{" "}
+            <Link
+              to="/login"
+              className="font-bold text-blue-900 hover:text-blue-800 hover:underline cursor-pointer"
+            >
+              Log In to Portal
+            </Link>
+          </p>
+        </div>
+      )}
     </div>
   );
 }
