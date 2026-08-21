@@ -1,0 +1,48 @@
+flowchart LR
+    %% Professional Theme Classes
+    classDef ui fill:#0284C7,stroke:#0369A1,stroke-width:2px,color:#FFF,rx:10px,ry:10px,font-family:Inter;
+    classDef api fill:#16A34A,stroke:#15803D,stroke-width:2px,color:#FFF,rx:10px,ry:10px,font-family:Inter;
+    classDef data fill:#D97706,stroke:#B45309,stroke-width:2px,color:#FFF,rx:10px,ry:10px,font-family:Inter;
+    classDef worker fill:#4F46E5,stroke:#4338CA,stroke-width:2px,color:#FFF,rx:10px,ry:10px,font-family:Inter;
+    classDef external fill:#475569,stroke:#334155,stroke-width:2px,color:#FFF,rx:10px,ry:10px,font-family:Inter;
+
+    %% Client Tier
+    subgraph Client ["Client Tier (Browser)"]
+        App["⚛️ React Application\n(Vite + TailwindCSS)"]:::ui
+    end
+
+    %% Application Tier
+    subgraph Server ["Application Tier (Node.js / Express)"]
+        API["🚀 API Gateway & Controllers"]:::api
+        Crypto["🔐 Crypto Engine\n(AES-256-GCM)"]:::api
+        Producer["⚡ Queue Producer\n(BullMQ)"]:::worker
+        Workers["⚙️ Background Workers\n(Concurrent Jobs)"]:::worker
+        
+        API --> Crypto
+        API --> Producer
+    end
+
+    %% Data Tier
+    subgraph Database ["Data & Caching Tier"]
+        Mongo[("🍃 MongoDB Atlas\n(Encrypted Data)")]:::data
+        Redis[("🔴 Redis Cluster\n(Queue Store)")]:::data
+    end
+
+    %% External Services
+    subgraph ThirdParty ["External Integrations"]
+        Auth["🔑 SuperTokens Core\n(Auth & Sessions)"]:::external
+        SMTP["✉️ Nodemailer\n(Email Service)"]:::external
+        SMS["📱 SMS Gateway\n(Fast2SMS)"]:::external
+    end
+
+    %% Relationships
+    App -- "REST / JSON" --> API
+    App -- "Auth Flow" --> Auth
+    
+    Crypto <--> Mongo
+    Producer -- "Enqueue" --> Redis
+    Redis -- "Dequeue" --> Workers
+    
+    API <--> Auth
+    Workers --> SMTP
+    Workers --> SMS

@@ -4,6 +4,10 @@ An end-to-end, banking-grade **Digital Loan Origination, KYC Verification, and A
 
 The platform implements strict sequential lending gating (Dual Verification $\rightarrow$ KYC $\rightarrow$ Financial Affordability $\rightarrow$ EMI Structuring $\rightarrow$ Legal NACH Mandate $\rightarrow$ Live Biometric Selfie $\rightarrow$ Loan Officer Sanction Desk) alongside **AES-256-GCM encryption at rest** and **UIDAI/RBI banking data masking**.
 
+## High-Level System Architecture
+
+![High-Level System Architecture](docs/architecture/system_architecture.png)
+
 ---
 
 ## High-Concurrency Redis Queue (BullMQ)
@@ -77,11 +81,6 @@ Notice how fast the API responds! The emails will be sent in the background.
 ```
 
 ---
-
-## High-Level System Architecture
-
-![High-Level System Architecture](docs/architecture/system_architecture.jpg)
-
 
 
 ## End-to-End 9-Step Lending Workflow
