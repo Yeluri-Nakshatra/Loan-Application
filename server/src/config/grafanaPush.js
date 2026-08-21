@@ -15,7 +15,7 @@ async function pushToGrafana() {
         metrics.forEach(metric => {
             metric.values.forEach(val => {
                 // Combine __name__ with other labels and force them all to strings
-                const labels = { __name__: metric.name };
+                const labels = { __name__: val.metricName || metric.name };
                 for (const [key, value] of Object.entries(val.labels || {})) {
                     labels[key] = String(value);
                 }

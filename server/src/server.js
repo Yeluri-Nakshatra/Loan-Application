@@ -84,18 +84,33 @@ app.get('/api/telemetry', async (req, res) => {
     const cpuData = cpuRes.data?.data?.result[0]?.values || [];
     const memData = memRes.data?.data?.result[0]?.values || [];
 
-    const maxLen = Math.max(apiData.length, cpuData.length, memData.length);
-    for (let i = 0; i < maxLen; i++) {
-      const timestamp = (apiData[i]?.[0] || cpuData[i]?.[0] || memData[i]?.[0] || 0) * 1000;
-      if (!timestamp) continue;
-      
-      chartData.push({
-        time: new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        apiHits: parseFloat(apiData[i]?.[1] || 0).toFixed(2),
-        cpuUsage: parseFloat(cpuData[i]?.[1] || 0).toFixed(4),
-        memoryMB: (parseFloat(memData[i]?.[1] || 0) / (1024 * 1024)).toFixed(0)
-      });
-    }
+          // Align sparse arrays by timestamp
+      const timeMap = new Map();
+
+      const processArray = (arr, key) => {
+        arr.forEach(point => {
+          const ts = point[0] * 1000;
+          if (!timeMap.has(ts)) timeMap.set(ts, {});
+          timeMap.get(ts)[key] = point[1];
+        });
+      };
+
+      processArray(apiData, 'api');
+      processArray(cpuData, 'cpu');
+      processArray(memData, 'mem');
+
+      // Sort by timestamp
+      const sortedTimestamps = Array.from(timeMap.keys()).sort((a, b) => a - b);
+
+      for (const ts of sortedTimestamps) {
+        const data = timeMap.get(ts);
+        chartData.push({
+          time: new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          apiHits: parseFloat(data.api || 0).toFixed(2),
+          cpuUsage: parseFloat(data.cpu || 0).toFixed(4),
+          memoryMB: (parseFloat(data.mem || 0) / (1024 * 1024)).toFixed(0)
+        });
+      }
 
     res.json(chartData);
   } catch (error) {
@@ -116,3 +131,7 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 // Trigger nodemon restart to pick up new .env variables
+
+// Trigger nodemon restart to pick up metric name fix
+
+// Trigger nodemon restart for chart alignment fix

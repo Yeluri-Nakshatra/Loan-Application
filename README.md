@@ -83,6 +83,14 @@ Notice how fast the API responds! The emails will be sent in the background.
 ---
 
 
+## Live System Telemetry & Monitoring
+
+Live infrastructure monitoring is powered by Grafana Cloud, capturing real-time API traffic, process CPU usage, and resident memory allocation.
+
+![Grafana Live Telemetry Dashboard](docs/architecture/graphana.png)
+
+---
+
 ## End-to-End 9-Step Lending Workflow
 
 ![9-Step Lending Workflow](docs/architecture/lending_workflow.jpg)

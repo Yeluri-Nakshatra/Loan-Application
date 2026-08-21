@@ -1001,7 +1001,7 @@ export default function LoanJourney() {
                   Bank Account Number <span className="text-red-500">*</span>
                 </label>
                 <input
-                  type="password"
+                  type="text"
                   value={accountNumber}
                   onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, ""))}
                   placeholder="e.g. 5010029482910"
