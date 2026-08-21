@@ -1,4 +1,4 @@
-# 💳 Enterprise Digital Lending & Automated Underwriting System
+# Enterprise Digital Lending & Automated Underwriting System
 
 An end-to-end, banking-grade **Digital Loan Origination, KYC Verification, and Automated Underwriting Platform** built with **React, Node.js/Express, MongoDB Atlas, SuperTokens, and TailwindCSS**.
 
@@ -6,13 +6,85 @@ The platform implements strict sequential lending gating (Dual Verification $\ri
 
 ---
 
-## 🏛️ High-Level System Architecture
+## High-Concurrency Redis Queue (BullMQ)
+
+To ensure the system remains highly responsive under heavy load, computationally expensive and I/O bound tasks (like sending OTP emails) are offloaded to a Redis-backed message queue using **BullMQ**.
+
+This ensures that the Node.js Event Loop is never blocked, allowing the Express API to instantly respond to users while worker threads process tasks concurrently in the background.
+
+### System Performance Demonstration
+
+We have provided two load-testing scripts in the `queue-test` folder to demonstrate the performance difference when handling concurrent API requests.
+
+#### 1. The Problem: Synchronous Processing
+Without a queue, the server must wait for each SMTP network request to finish before responding to the user. This severely bottlenecks the system, blocking the event loop and causing subsequent connections to time out.
+
+**Command:**
+```bash
+node queue-test/1-not-handling-concurrent-requests.js
+```
+
+**Output:**
+```text
+================================================================
+🚨 THE PROBLEM: NOT HANDLING CONCURRENT REQUESTS (SYNCHRONOUS) 🚨
+================================================================
+Sending 10 concurrent requests to the API...
+These requests will be processed SYNCHRONOUSLY without a queue.
+Notice how long they take to respond, and some might even timeout or fail!
+
+⚠️ Request 7 FINISHED at 2.99s [Status: 200] - Handled, but very slow!
+⚠️ Request 2 FINISHED at 3.18s [Status: 200] - Handled, but very slow!
+⚠️ Request 4 FINISHED at 3.46s [Status: 200] - Handled, but very slow!
+⚠️ Request 6 FINISHED at 3.73s [Status: 200] - Handled, but very slow!
+❌ Request 1 FAILED at 4.03s: Connection timed out because the server was too busy processing earlier requests synchronously.
+❌ Request 3 FAILED at 4.03s: Connection timed out because the server was too busy processing earlier requests synchronously.
+❌ Request 5 FAILED at 4.03s: Connection timed out because the server was too busy processing earlier requests synchronously.
+❌ Request 10 FAILED at 4.03s: Connection timed out because the server was too busy processing earlier reques
+
+🛑 Finished with failures in 4.03 seconds.
+```
+
+#### 2. The Solution: Asynchronous Queued Processing (Concurrency: 10)
+By dispatching jobs to Redis and letting BullMQ worker threads handle them concurrently (configured to process 10 jobs at a time), the API responds instantly. We can process double the workload in a fraction of the time without dropping a single connection.
+
+**Command:**
+```bash
+node queue-test/2-handling-concurrent-requests.js
+```
+
+**Output:**
+```text
+================================================================
+✅ THE SOLUTION: HANDLING CONCURRENT REQUESTS WITH BULLMQ ✅
+================================================================
+Sending 20 concurrent requests to the API...
+These requests will be INSTANTLY accepted and placed into the Redis queue.
+Notice how fast the API responds! The emails will be sent in the background.
+
+✅ Request 1 RESPONDED in 0.22s [Status: 200]
+✅ Request 2 RESPONDED in 0.24s [Status: 200]
+✅ Request 7 RESPONDED in 0.24s [Status: 200]
+✅ Request 4 RESPONDED in 0.24s [Status: 200]
+✅ Request 9 RESPONDED in 0.24s [Status: 200]
+✅ Request 5 RESPONDED in 0.24s [Status: 200]
+✅ Request 6 RESPONDED in 0.25s [Status: 200]
+✅ Request 3 RESPONDED in 0.25s [Status: 200]
+✅ Request 8 RESPONDED in 0.25s [Status: 200]
+...
+
+🎉 All 20 requests successfully accepted in just 0.86 seconds!
+```
+
+---
+
+## High-Level System Architecture
 
 ![High-Level System Architecture](docs/architecture/system_architecture.jpg)
 
 
 
-## 🔄 End-to-End 9-Step Lending Workflow
+## End-to-End 9-Step Lending Workflow
 
 ![9-Step Lending Workflow](docs/architecture/lending_workflow.jpg)
 
@@ -66,7 +138,7 @@ sequenceDiagram
 
 ---
 
-## 🔒 AES-256-GCM Cryptographic & Data Masking Pipeline
+## AES-256-GCM Cryptographic & Data Masking Pipeline
 
 ![AES-256-GCM Security and Masking Pipeline](docs/architecture/security_pipeline.jpg)
 
@@ -102,7 +174,7 @@ flowchart LR
 
 ---
 
-## 📊 Financial FOIR & Credit Decision Engine
+## Financial FOIR & Credit Decision Engine
 
 The automated credit decisioning tree enforces institutional risk policies and the **50% FOIR (Fixed Obligation to Income Ratio)** rule:
 
@@ -128,7 +200,7 @@ flowchart TD
 
 ---
 
-## 📐 Financial Mathematical Models
+## Financial Mathematical Models
 
 ### 1. Reducing-Balance EMI Equation
 $$\text{EMI} = \frac{P \times r \times (1 + r)^n}{(1 + r)^n - 1}$$
@@ -145,7 +217,7 @@ $$\text{Max Eligible Principal} = \frac{\text{Max Allowed EMI} \times \left((1 +
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 | Layer | Technologies |
 | :--- | :--- |
@@ -157,7 +229,7 @@ $$\text{Max Eligible Principal} = \frac{\text{Max Allowed EMI} \times \left((1 +
 
 ---
 
-## 🚀 Quick Start Guide
+## Quick Start Guide
 
 ### Prerequisites
 * **Node.js** v18+ and **npm**
@@ -212,7 +284,7 @@ $$\text{Max Eligible Principal} = \frac{\text{Max Allowed EMI} \times \left((1 +
 
 ---
 
-## 👥 Default Test Accounts & Roles
+## Default Test Accounts & Roles
 
 | Role | Email | Access Scope |
 | :--- | :--- | :--- |
@@ -221,5 +293,7 @@ $$\text{Max Eligible Principal} = \frac{\text{Max Allowed EMI} \times \left((1 +
 
 ---
 
-## 📜 License
+
+
+## License
 This project is licensed under the **ISC License**.
