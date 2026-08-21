@@ -46,7 +46,7 @@ if (redisConnection) {
         throw err; // BullMQ will automatically retry based on defaultJobOptions
       }
     },
-    { connection: redisConnection }
+    { connection: redisConnection, concurrency: 10 }
   );
 
   worker.on("completed", (job) => {

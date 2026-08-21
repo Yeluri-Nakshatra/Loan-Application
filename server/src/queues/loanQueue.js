@@ -35,7 +35,7 @@ if (redisConnection) {
       
       console.log(`[Loan Worker] 💾 Database updated for Loan ${loanId}`);
     },
-    { connection: redisConnection }
+    { connection: redisConnection, concurrency: 10 }
   );
 
   worker.on("completed", (job) => {

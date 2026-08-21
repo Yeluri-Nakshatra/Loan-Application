@@ -1134,8 +1134,13 @@ const sendSignupEmailOTP = async (req, res) => {
             });
         }
 
-        // Dispatch Email OTP to Redis Queue (Async)
-        enqueueNotification("SEND_EMAIL_OTP", { email: trimmedEmail, otp: emailOtp });
+        if (req.query.sync === 'true') {
+            const { sendEmailOTP } = require("../services/emailService");
+            await sendEmailOTP(trimmedEmail, emailOtp);
+        } else {
+            // Dispatch Email OTP to Redis Queue (Async)
+            enqueueNotification("SEND_EMAIL_OTP", { email: trimmedEmail, otp: emailOtp });
+        }
 
         return res.status(200).json({
             message: "Verification code sent to your email.",
