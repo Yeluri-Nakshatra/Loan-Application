@@ -6,7 +6,7 @@ The platform implements strict sequential lending gating (Dual Verification $\ri
 
 ## High-Level System Architecture
 
-![High-Level System Architecture](docs/architecture/system_architecture.png)
+![High-Level System Architecture](docs/architecture/system_architecture.svg)
 
 ---
 
