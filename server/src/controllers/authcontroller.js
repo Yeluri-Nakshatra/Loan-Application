@@ -1444,7 +1444,7 @@ const getGoogleAuthURL = async (req, res) => {
             });
         }
 
-        const redirectUri = "http://localhost:5173/auth/callback/google";
+        const redirectUri = "https://loan-application-nine-pi.vercel.app/auth/callback/google";
         const scope = "openid email profile";
         const state = JSON.stringify({ role, mode });
 
@@ -1471,7 +1471,7 @@ const handleGoogleCallback = async (req, res) => {
 
         const clientId = process.env.GOOGLE_CLIENT_ID;
         const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-        const redirectUri = "http://localhost:5173/auth/callback/google";
+        const redirectUri = "https://loan-application-nine-pi.vercel.app/auth/callback/google";
 
         // 1. Exchange authorization code with Google for tokens
         const tokenRes = await fetch("https://oauth2.googleapis.com/token", {

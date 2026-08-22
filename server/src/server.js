@@ -11,7 +11,7 @@ const connectDB = require("./config/db");
 // SuperTokens configuration
 require("./config/supertokens");
 
-const authRoutes = require("./routes/authRoutes");
+const authRoutes = require("./routes/authroutes");
 const kycRoutes = require("./routes/kycRoutes");
 const eligibilityRoutes = require("./routes/eligibilityRoutes");
 const applicationRoutes = require("./routes/applicationRoutes");
@@ -36,7 +36,7 @@ require("./config/grafanaPush");
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173","https://loan-application-nine-pi.vercel.app"],
     credentials: true,
   })
 );

@@ -14,7 +14,7 @@ supertokens.init({
   appInfo: {
     appName: "Loan Application",
     apiDomain: "http://localhost:5000",
-    websiteDomain: "http://localhost:5173",
+    websiteDomain: ["http://localhost:5173","https://loan-application-nine-pi.vercel.app"],
 
     apiBasePath: "/auth",
     websiteBasePath: "/auth",
