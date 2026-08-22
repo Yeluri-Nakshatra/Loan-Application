@@ -262,9 +262,14 @@ $$\text{Max Eligible Principal} = \frac{\text{Max Allowed EMI} \times \left((1 +
    EMAIL_USER="your_email@gmail.com"
    EMAIL_PASSWORD="your_app_password"
    SUPERTOKENS_CONNECTION_URI="https://try.supertokens.io"
-   FAST2SMS_API_KEY="your_fast2sms_key"
    GOOGLE_CLIENT_ID="your_google_client_id"
    GOOGLE_CLIENT_SECRET="your_google_client_secret"
+   FAST2SMS_API_KEY="your_fast2sms_key"
+   TWILIO_ACCOUNT_SID="your_twilio_account_sid"
+   TWILIO_AUTH_TOKEN="your_twilio_auth_token"
+   TWILIO_PHONE_NUMBER="your_twilio_phone_number"
+   REDIS_URL="your_redis_connection_url"
+   GRAFANA_API_KEY="your_grafana_api_key"
    ```
 4. Start the backend API:
    ```bash
