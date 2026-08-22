@@ -21,7 +21,7 @@ const {
   getGoogleAuthURL,
   handleGoogleCallback,
   registerAdmin,
-} = require("../controllers/authController");
+} = require("../controllers/authcontroller");
 
 const {
     requireRole
